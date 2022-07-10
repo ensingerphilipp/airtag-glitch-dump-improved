@@ -50,41 +50,46 @@ const uint8_t CMD_DELAY = 0x41;
 const uint8_t CMD_PULSE = 0x42;
 const uint8_t CMD_GLITCH = 0x43;
 
-void dv(uint32_t delay, uint32_t pulse) {
+void dv(uint32_t delay, uint32_t pulse, uint32_t counter) {
     cls(false);
-    printf("AirTag Glitch Values set:\nDelay: %d\nPulse: %d \n", delay, pulse);
+    printf("Try Number %d: Delay = %d , Pulse = %d \r", counter, delay, pulse);
 }
 
 int main() {
     stdio_init_all();
     // Sleep X MS to Wait for USB Serial to initialize
     while (!tud_cdc_connected()) { sleep_ms(100);  }
-    printf("USB-Serial connected!\n");
+    printf("USB-Serial connected!\r\n");
     stdio_set_translate_crlf(&stdio_usb, false);
     pdnd_initialize();
     pdnd_enable_buffers(0);
     pdnd_display_initialize();
     pdnd_enable_buffers(1);
     cls(false);
-    printf("Initializing Raspberry Pi Pico Board ... ");
+    printf("Initializing Raspberry Pi Pico Board ... \r\n");
 
     // Sets up trigger & glitch output
     initialize_board();
     
-    printf("\nBoot-Sequence finished - starting Glitch Loop. \n");
+    printf("Boot-Sequence finished - starting Glitch Loop. \r\n\n");
     uint32_t delay = 0;
     uint32_t pulse = 0;
-
+    uint32_t counter = 0;
+    
     while(1) {
+        counter = counter + 1;
+        if((counter % 100) == 0){
+            dv(delay, pulse, counter);
+        }
         uint8_t cmd = getchar();
         switch(cmd) {
             case CMD_DELAY:
                 fread(&delay, 1, 4, stdin);
-                dv(delay, pulse);
+                //dv(delay, pulse, counter);
                 break;
             case CMD_PULSE:
                 fread(&pulse, 1, 4, stdin);
-                dv(delay, pulse);
+                //dv(delay, pulse, counter);
                 break;
             case CMD_GLITCH:
                 power_cycle_target();
