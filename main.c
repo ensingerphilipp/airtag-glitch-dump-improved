@@ -57,6 +57,8 @@ void dv(uint32_t delay, uint32_t pulse) {
 
 int main() {
     stdio_init_all();
+    // Sleep 1000 MS to Wait for USB Serial to initialize
+    sleep_ms(1000)
     stdio_set_translate_crlf(&stdio_usb, false);
     pdnd_initialize();
     pdnd_enable_buffers(0);
@@ -86,7 +88,7 @@ int main() {
             case CMD_GLITCH:
                 power_cycle_target();
 
-                while(!gpio_get(1 + IN_NRF_VDD));
+                while(gpio_get(1 + IN_NRF_VDD));
                 for(uint32_t i=0; i < delay; i++) {
                     asm("NOP");
                 }
