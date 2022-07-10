@@ -52,25 +52,26 @@ const uint8_t CMD_GLITCH = 0x43;
 
 void dv(uint32_t delay, uint32_t pulse) {
     cls(false);
-    pprintf("AirTag\nD: %d\nP: %d", delay, pulse);
+    printf("AirTag Glitch Values set:\nDelay: %d\nPulse: %d \n", delay, pulse);
 }
 
 int main() {
     stdio_init_all();
-    // Sleep 1000 MS to Wait for USB Serial to initialize
-    sleep_ms(1000);
+    // Sleep X MS to Wait for USB Serial to initialize
+    while (!tud_cdc_connected()) { sleep_ms(100);  }
+    printf("USB-Serial connected!\n");
     stdio_set_translate_crlf(&stdio_usb, false);
     pdnd_initialize();
     pdnd_enable_buffers(0);
     pdnd_display_initialize();
     pdnd_enable_buffers(1);
     cls(false);
-    pprintf("AirTag");
+    printf("Initializing Raspberry Pi Pico Board ... ");
 
     // Sets up trigger & glitch output
     initialize_board();
     
-
+    printf("\nBoot-Sequence finished - starting Glitch Loop. \n");
     uint32_t delay = 0;
     uint32_t pulse = 0;
 
@@ -79,11 +80,11 @@ int main() {
         switch(cmd) {
             case CMD_DELAY:
                 fread(&delay, 1, 4, stdin);
-                // dv(delay, pulse);
+                dv(delay, pulse);
                 break;
             case CMD_PULSE:
                 fread(&pulse, 1, 4, stdin);
-                // dv(delay, pulse);
+                dv(delay, pulse);
                 break;
             case CMD_GLITCH:
                 power_cycle_target();
