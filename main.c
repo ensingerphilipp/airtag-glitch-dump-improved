@@ -49,6 +49,8 @@ static inline power_cycle_target() {
 const uint8_t CMD_DELAY = 0x41;
 const uint8_t CMD_PULSE = 0x42;
 const uint8_t CMD_GLITCH = 0x43;
+const uint8_t CMD_POWERUP = 0x44;
+const uint8_t CMD_POWERDOWN = 0x45;
 
 void dv(uint32_t delay, uint32_t pulse, uint32_t counter) {
     cls(false);
@@ -90,6 +92,12 @@ int main() {
             case CMD_PULSE:
                 fread(&pulse, 1, 4, stdin);
                 //dv(delay, pulse, counter);
+                break;
+            case CMD_POWERUP:
+                gpio_put(TARGET_POWER, 1);
+                break;
+            case CMD_POWERDOWN:
+                gpio_put(TARGET_POWER, 0);
                 break;
             case CMD_GLITCH:
                 power_cycle_target();
