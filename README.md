@@ -137,6 +137,8 @@ usermod -a -G dialout $USER
 
 
 ## Glitching & Dumping 
+***Important Note:***
+First of all make sure the Airtag is not connected to any iPhone (remove Airtag in FindMy-App) 
 
  1. Have the Hardware and Software set up, be in virtual environment and have jupyter Notebook open
  2. Connect the j-Link and the Raspberry Pi Pico via USB
