@@ -224,6 +224,38 @@ You have successfully dumped the Airtag - now you can do whatever you wish with 
 
 --- this section is ommited from public viewing due to moral concerns ---
 
+## Troubleshooting: Destructive Erase During Glitching
+**Warning**: Successful SWD access following a voltage-glitching attempt does not necessarily indicate successful, non-destructive access to the original firmware.
+
+During experiments with an APPROTECT-enabled AirTag, an apparent successful glitch was followed by an unsuccessful firmware extraction. Subsequent examination through J-Link and OpenOCD indicated that application flash had been erased, although the microcontroller remained accessible through SWD.
+
+Observed Symptoms:
+1. OpenOCD reported clearing lockup after double fault and difficulty polling the target.
+2. SWD communication remained functional, and the processor could be halted and examined.
+3. Reads from the beginning of application flash (0x00000000 and 0x00000004) returned 0xFFFFFFFF.
+4. The APPROTECT-related UICR location (0x10001208) also returned 0xFFFFFFFF.
+5. After reset, the program counter (0xFFFFFFFE) and main stack pointer (0xFFFFFFFC) were consistent with an erased vector table.
+
+Interpretation:
+These observations were consistent with a destructive erase or recovery event rather than physical damage to the microcontroller. Although the erased state was discovered following voltage-glitching experiments, the exact operation responsible for the erase was not conclusively identified. The device remained accessible through SWD but could no longer execute its original firmware.
+
+Recommendations:
+1. Do not interpret successful debugger attachment alone as evidence of successful firmware extraction.
+2. Verify that application flash contains plausible data before treating a firmware dump as successful.
+3. Distinguish between inaccessible targets, non-destructive access, and apparently erased firmware when recording glitch outcomes.
+4. Preserve diagnostic logs and memory observations before resetting or power-cycling the device.
+
+Note: This section documents one experimental failure and is not a validated recovery procedure. Erased firmware should not be assumed recoverable.
+
+### Diagnostic Evidence
+
+The following OpenOCD output shows erased application flash
+and UICR values, while RAM and FICR locations remain readable.
+
+![OpenOCD diagnostic output showing erased flash and UICR](assets/Airtag_erased_flash.png)
+
+*Figure 1: OpenOCD memory reads following an unsuccessful AirTag firmware extraction.*
+
 ## Useful Resources:
 Stacksmashing´s Devcon 29 Talk about Airtags:
 > https://www.youtube.com/watch?v=paxErRRsrTU
