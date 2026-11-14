@@ -247,6 +247,15 @@ Recommendations:
 
 Note: This section documents one experimental failure and is not a validated recovery procedure. Erased firmware should not be assumed recoverable.
 
+### Diagnostic Evidence
+
+The following OpenOCD output shows erased application flash
+and UICR values, while RAM and FICR locations remain readable.
+
+![OpenOCD diagnostic output showing erased flash and UICR](assets/Airtag_erased_flash.png)
+
+*Figure 1: OpenOCD memory reads following an unsuccessful AirTag firmware extraction.*
+
 ## Useful Resources:
 Stacksmashing´s Devcon 29 Talk about Airtags:
 > https://www.youtube.com/watch?v=paxErRRsrTU
